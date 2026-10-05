@@ -35,9 +35,16 @@ export async function getExtras(meal: Meal, date?: string): Promise<string> {
       if (item.description) {
         lines.push(`    ${item.description}`);
       }
+      lines.push(`    ID: ${item.id}`);
     }
     lines.push("");
   }
+
+  // Extras, prices and IDs can differ by date and mess, so IDs should be looked up per date
+  lines.push(
+    "_To register, pass the item ID as `extra_id` and the mess heading as `meal_mess` to register_extra. " +
+    "Availability and IDs can differ by date and mess, so look them up for the exact date._"
+  );
 
   return lines.join("\n");
 }
@@ -81,7 +88,17 @@ export async function registerExtra(
     meal_mess: mealMess,
   });
 
-  return `✅ Successfully registered for extra item on ${mealDate} for ${mealType}.`;
+  const lines = [`✅ Successfully registered for extra item on ${mealDate} for ${mealType}.`];
+
+  // Surface the new registration ID(s) when the API returns them, so they can be deleted later
+  const registrations = Array.isArray(response?.data) ? response.data : [];
+  for (const registration of registrations) {
+    if (registration?.id) {
+      lines.push(`  ID: ${registration.id} (for deletion)`);
+    }
+  }
+
+  return lines.join("\n");
 }
 
 export async function deleteExtraRegistration(registrationId: string): Promise<string> {

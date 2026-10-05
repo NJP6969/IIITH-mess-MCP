@@ -254,7 +254,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       // Extra items tools
       {
         name: "get_extras",
-        description: "List available extra items for a meal",
+        description: "List available extra items for a meal on a date, grouped by mess, including each item's ID. Availability, prices and IDs can vary by date and mess.",
         inputSchema: {
           type: "object",
           properties: {
@@ -282,10 +282,10 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         inputSchema: {
           type: "object",
           properties: {
-            extra_id: { type: "string", description: "ID of the extra item" },
+            extra_id: { type: "string", description: "ID of the extra item, from get_extras for the same date and meal" },
             meal_date: { type: "string", description: "Date in YYYY-MM-DD format" },
             meal_type: { type: "string", enum: ["breakfast", "lunch", "snacks", "dinner"], description: "The meal type" },
-            meal_mess: { type: "string", description: "Mess ID" },
+            meal_mess: { type: "string", description: "Mess ID (e.g. kadamba-nonveg), which must offer this extra on that date" },
           },
           required: ["extra_id", "meal_date", "meal_type", "meal_mess"],
         },
